@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../screens/semester/grade1/semester1_screen.dart';
+import '../screens/semester/grade1/semester2_screen.dart';
+import '../screens/semester/grade2/semester1_screen.dart';
 
 class GradeSelectionScreen extends StatefulWidget {
   @override
@@ -8,21 +11,46 @@ class GradeSelectionScreen extends StatefulWidget {
 class _GradeSelectionScreenState extends State<GradeSelectionScreen> {
   int? selectedGrade; // 현재 선택된 학년 (null일 경우 아무 학년도 선택되지 않음)
 
+  // 학기별 문제 정보를 정의합니다.
+  final Map<int, Map<String, dynamic>> semesterDetails = {
+    1: {
+      '1학기': "덧셈 문제",
+      '2학기': ["덧셈", "뺄셈", "두자리 덧셈", "두자리 뺄셈"],
+    },
+    2: {
+      '1학기': ["덧셈", "뺄셈", "곱셈"],
+      '2학기': "문제 정보 없음",
+    },
+    3: {
+      '1학기': "문제 정보 없음",
+      '2학기': "문제 정보 없음",
+    },
+    4: {
+      '1학기': "문제 정보 없음",
+      '2학기': "문제 정보 없음",
+    },
+    5: {
+      '1학기': "문제 정보 없음",
+      '2학기': "문제 정보 없음",
+    },
+    6: {
+      '1학기': "문제 정보 없음",
+      '2학기': "문제 정보 없음",
+    },
+  };
+
   @override
   Widget build(BuildContext context) {
-    // 화면 크기 가져오기
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    // 버튼 간격과 크기 설정
-    final spacing = screenWidth * 0.06; // 버튼 간의 간격 (화면 너비의 6%)
-    final buttonHeight = (screenHeight - spacing * 10) / 12;
-    final buttonWidth = screenWidth * 0.8; // 학년 버튼의 가로 크기
+    final spacing = screenWidth * 0.04; // 버튼 간 간격 조정
+    final buttonHeight = screenHeight * 0.08; // 학기 버튼 높이를 이전 크기로 조정
+    final buttonWidth = screenWidth * 0.35; // 학기 버튼 너비 조정
 
     return Scaffold(
       body: Column(
         children: [
-          // 상단 타이틀
           Container(
             padding: EdgeInsets.symmetric(vertical: screenHeight * 0.03),
             color: Colors.blue,
@@ -38,11 +66,11 @@ class _GradeSelectionScreenState extends State<GradeSelectionScreen> {
               ),
             ),
           ),
-          // 학년 버튼들
           Expanded(
             child: ListView.builder(
-              itemCount: 6, // 학년 수
-              padding: EdgeInsets.symmetric(horizontal: spacing, vertical: spacing),
+              itemCount: semesterDetails.keys.length, // 모든 학년 표시
+              padding:
+                  EdgeInsets.symmetric(horizontal: spacing, vertical: spacing),
               itemBuilder: (context, index) {
                 int grade = index + 1; // 학년 계산
                 return Column(
@@ -51,21 +79,18 @@ class _GradeSelectionScreenState extends State<GradeSelectionScreen> {
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          // 같은 학년을 다시 터치하면 학기 버튼 감춤
-                          if (selectedGrade == grade) {
-                            selectedGrade = null;
-                          } else {
-                            selectedGrade = grade; // 다른 학년을 선택하면 업데이트
-                          }
+                          selectedGrade =
+                              (selectedGrade == grade) ? null : grade;
                         });
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: selectedGrade == grade
                             ? Colors.blueAccent.shade700
-                            : Colors.blueAccent, // 선택된 학년 강조 색상
-                        minimumSize: Size(buttonWidth, buttonHeight),
+                            : Colors.blueAccent,
+                        minimumSize: Size(buttonWidth * 2, buttonHeight),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                          borderRadius:
+                              BorderRadius.circular(screenWidth * 0.03),
                         ),
                       ),
                       child: Center(
@@ -79,23 +104,28 @@ class _GradeSelectionScreenState extends State<GradeSelectionScreen> {
                         ),
                       ),
                     ),
-                    // 학년 버튼과 학기 버튼 사이 간격
                     if (selectedGrade == grade) SizedBox(height: spacing / 2),
-                    // 학기 버튼 표시
                     if (selectedGrade == grade) ...[
+                      // 학기 버튼과 문제 설명 영역을 분리
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
+                          // 1학기 버튼
                           ElevatedButton(
                             onPressed: () {
-                              print('$grade학년 1학기 선택됨');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        Grade1Semester1Screen()),
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
-                              padding: EdgeInsets.symmetric(vertical: 15),
-                              minimumSize: Size(buttonWidth / 2.5, buttonHeight / 1.5),
+                              minimumSize: Size(buttonWidth, buttonHeight),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                                borderRadius:
+                                    BorderRadius.circular(screenWidth * 0.03),
                               ),
                             ),
                             child: Text(
@@ -107,17 +137,22 @@ class _GradeSelectionScreenState extends State<GradeSelectionScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(width: spacing), // 학기 버튼 간 간격
+                          // 2학기 버튼
                           ElevatedButton(
                             onPressed: () {
-                              print('$grade학년 2학기 선택됨');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        Grade1Semester2Screen()),
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
-                              padding: EdgeInsets.symmetric(vertical: 15),
-                              minimumSize: Size(buttonWidth / 2.5, buttonHeight / 1.5),
+                              minimumSize: Size(buttonWidth, buttonHeight),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                                borderRadius:
+                                    BorderRadius.circular(screenWidth * 0.03),
                               ),
                             ),
                             child: Text(
@@ -131,10 +166,34 @@ class _GradeSelectionScreenState extends State<GradeSelectionScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: spacing), // 학기 버튼 아래 간격
+                      SizedBox(height: spacing / 2),
+                      // 문제 설명 영역
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          // 1학기 설명
+                          Container(
+                            width: buttonWidth,
+                            child: _buildSemesterInfo(
+                              semesterDetails[grade]?['1학기'],
+                              screenWidth,
+                              TextAlign.left,
+                            ),
+                          ),
+                          // 2학기 설명
+                          Container(
+                            width: buttonWidth,
+                            child: _buildSemesterInfo(
+                              semesterDetails[grade]?['2학기'],
+                              screenWidth,
+                              TextAlign.right,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: spacing),
                     ],
-                    // 학년 버튼 사이 간격
-                    SizedBox(height: spacing),
+                    SizedBox(height: spacing), // 학년 간 공백 추가
                   ],
                 );
               },
@@ -143,5 +202,38 @@ class _GradeSelectionScreenState extends State<GradeSelectionScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildSemesterInfo(
+      dynamic details, double screenWidth, TextAlign align) {
+    if (details is String) {
+      return Text(
+        "- $details",
+        style: TextStyle(
+          fontSize: screenWidth * 0.04,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+        textAlign: align,
+      );
+    } else if (details is List<String>) {
+      return Column(
+        crossAxisAlignment: align == TextAlign.left
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.end,
+        children: details.map((type) {
+          return Text(
+            "- $type",
+            style: TextStyle(
+              fontSize: screenWidth * 0.04,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+            textAlign: align,
+          );
+        }).toList(),
+      );
+    }
+    return SizedBox();
   }
 }
